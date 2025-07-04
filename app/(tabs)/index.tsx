@@ -21,6 +21,9 @@ export default function HomeScreen() {
         <ThemedView style={container.content}>
           <ThemedView style={styles.header}>
             <ThemedText type='title'>Translate</ThemedText>
+            <ThemedView>
+              
+            </ThemedView>
           </ThemedView>
         </ThemedView>
       </Animated.ScrollView>
