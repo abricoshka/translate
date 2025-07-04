@@ -1,9 +1,11 @@
+import { Colors } from '@/constants/Colors';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import {
     Dimensions,
     StyleSheet,
     TouchableOpacity,
+    useColorScheme,
     View,
     ViewStyle,
 } from 'react-native';
@@ -40,6 +42,7 @@ export default function FloatingCapsuleTabBar({
     const isDragging = useSharedValue(false);
     const translateX = useSharedValue(state.index * TAB_WIDTH);
     const startX = useSharedValue(state.index * TAB_WIDTH);
+    const colorScheme = Colors[useColorScheme() || "light"];
 
     const capsuleStyle = useAnimatedStyle(() => ({
         transform: [{ translateX: translateX.value }, { scaleX: capsuleScaleX.value }, { scaleY: capsuleScaleY.value }],
@@ -73,14 +76,14 @@ export default function FloatingCapsuleTabBar({
         });
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: colorScheme.nav}, {borderColor: colorScheme.nav_border}]}>
             {/* use panGesture with GestureDetector to detect pans */}
             <GestureDetector gesture={panGesture}>
-                <Animated.View style={[styles.capsule, capsuleStyle]} />
+                <Animated.View style={[styles.capsule, capsuleStyle, {backgroundColor: colorScheme.nav_capsule}]} />
             </GestureDetector>
             {TABS.map((tab, index) => {
                 const isFocused = state.index === index;
-                const tintColor = isFocused ? '#03C0D4' : '#000000';
+                const tintColor = isFocused ? colorScheme.nav_icons_tinted : colorScheme.nav_icons;
 
                 const { icon, label } = tabMeta[tab];
 
@@ -100,7 +103,7 @@ export default function FloatingCapsuleTabBar({
                             translateX.value = withTiming((index * TAB_WIDTH) / 1.1);
                             navigation.navigate(tab as never);
                         }}
-                        activeOpacity={0.7}
+                        activeOpacity={1}
                     >
                         <View style={styles.tabContent}>
                             {icons[icon]({ color: tintColor })}
@@ -123,13 +126,11 @@ const styles = StyleSheet.create({
         bottom: 30,
         left: 20,
         right: 20,
-        backgroundColor: '#FAF9FE',
         borderRadius: 50,
         flexDirection: 'row',
         // overflow: 'hidden',
         elevation: 10,
         paddingHorizontal: CONTAINER_PADDING,
-        borderColor: 'white',
         borderWidth: 1.8,
     } as ViewStyle,
     capsule: {
@@ -138,7 +139,6 @@ const styles = StyleSheet.create({
         left: 2.5,
         width: 92,
         height: 52,
-        backgroundColor: '#E7E6EC',
         borderRadius: 30,
     },
     tab: {
